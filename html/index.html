@@ -1,7 +1,7 @@
 <script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
 <!-- <script src="../js/d3.js" charset="utf-8"></script> -->
 <script src="../js/main.js"></script>
-<svg id="content" width="1000" height="500"></svg>
+<svg id="content" width="1400" height="800"></svg>
 <script text="script">
   var data_set = {
     // name: "main",
@@ -20,8 +20,6 @@
           { name: "2bbb", val: 50 },
           { name: "2ccc", val: 50 },
           { name: "2ddd", val: 50 },
-          { name: "2eee", val: 50 },
-          { name: "2fff", val: 50 },
         ],
       },
       {
@@ -52,6 +50,59 @@
           { name: "4iiiiiiiiii", val: 50 },
         ],
       },
+      {
+        name: "5",
+        children: [
+          { name: "5aaa", val: 50 },
+          { name: "5bbb", val: 50 },
+          { name: "5ccc", val: 50 },
+          { name: "5ddd", val: 50 },
+          { name: "5eee", val: 50 },
+          { name: "5fff", val: 50 },
+          { name: "5g", val: 50 },
+        ],
+      },
+      {
+        name: "5",
+        children: [
+          { name: "5aaa", val: 50 },
+          { name: "5bbb", val: 50 },
+          { name: "5ccc", val: 50 },
+          { name: "5ddd", val: 50 },
+          { name: "5eee", val: 50 },
+          { name: "5fff", val: 50 },
+          { name: "5g", val: 50 },
+          { name: "5g", val: 50 },
+          { name: "5g", val: 50 },
+          { name: "5g", val: 50 },
+          { name: "5g", val: 50 },
+          { name: "5g", val: 50 },
+        ],
+      },
+      {
+        name: "6",
+        children: [
+          { name: "6aaa", val: 50 },
+          { name: "6bbb", val: 50 },
+          { name: "6ccc", val: 50 },
+        ],
+      },
+      {
+        name: "6",
+        children: [
+          { name: "6aaa", val: 50 },
+          { name: "6bbb", val: 50 },
+          { name: "6ccc", val: 50 },
+        ],
+      },
+      {
+        name: "6",
+        children: [
+          { name: "6aaa", val: 50 },
+          { name: "6bbb", val: 50 },
+          { name: "6ccc", val: 50 },
+        ],
+      },
     ],
   };
   // var data_set = {
@@ -68,8 +119,8 @@
   //   ],
   // };
 
-  var width = 1000,
-    height = 500;
+  var width = 1400,
+    height = 800;
 
   var bubble = d3.pack().size([width, height]).padding(20);
   // var bubble = d3.pack().size([width, height]).padding(20);
@@ -81,7 +132,7 @@
 
   var no_root_bubble = bubble_data.filter(function (d) {
     return d.parent != null;
-    return true;
+    // return true;
   });
 
   var max_val = d3.max(no_root_bubble, function (d) {
@@ -94,7 +145,7 @@
   var color_scale = d3
     .scaleLinear()
     .domain([min_val, max_val])
-    .range(d3.schemeCategory10);
+    .range(["yellow", "red"]);
   var font_scale = d3.scaleLinear().domain([min_val, max_val]).range([9, 28]);
 
   var bubbles = d3
@@ -115,11 +166,25 @@
     .style("fill", function (d, i) {
       return color_scale(d.r);
     })
-    .style("opacity", 0.1);
+    .style("opacity", 0.5);
   bubbles
     .append("text")
-    .attr("text-anchor", "middle")
-    .attr("dominant-baseline", "central")
+    // .attr("text-anchor", "middle")
+    .attr("text-anchor", function (d) {
+      return "middle";
+    })
+    .attr("dominant-baseline", function (d) {
+      if (d.parent.parent == null) {
+        return "central";
+      } else {
+        return "central";
+      }
+    })
+    // .attr("y", function (d) {
+    //   if (d.parent.parent == null) {
+    //     return d.y - d.r;
+    //   }
+    // })
     .text(function (d) {
       return d.data.name;
     })
