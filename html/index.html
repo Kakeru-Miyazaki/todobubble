@@ -1,194 +1,295 @@
-<script src="https://d3js.org/d3.v4.min.js" charset="utf-8"></script>
-<!-- <script src="../js/d3.js" charset="utf-8"></script> -->
-<script src="../js/main.js"></script>
-<svg id="content" width="1400" height="800"></svg>
-<script text="script">
-  var data_set = {
-    // name: "main",
-    children: [
-      {
-        name: "1",
-        children: [
-          { name: "1aaa", val: 50 },
-          { name: "1bbb", val: 50 },
-        ],
-      },
-      {
-        name: "2",
-        children: [
-          { name: "2aaa", val: 50 },
-          { name: "2bbb", val: 50 },
-          { name: "2ccc", val: 50 },
-          { name: "2ddd", val: 50 },
-        ],
-      },
-      {
-        name: "3",
-        children: [
-          { name: "3aaa", val: 50 },
-          { name: "3bbb", val: 50 },
-          { name: "3ccc", val: 50 },
-          { name: "3ddd", val: 50 },
-          { name: "3eee", val: 50 },
-          { name: "3fff", val: 50 },
-          { name: "3g", val: 50 },
-          { name: "3hhhhh", val: 50 },
-          { name: "3iiiiiiiiii", val: 50 },
-        ],
-      },
-      {
-        name: "4",
-        children: [
-          { name: "4aaa", val: 50 },
-          { name: "4bbb", val: 50 },
-          { name: "4ccc", val: 50 },
-          { name: "4ddd", val: 50 },
-          { name: "4eee", val: 50 },
-          { name: "4fff", val: 50 },
-          { name: "4g", val: 50 },
-          { name: "4hhhhh", val: 50 },
-          { name: "4iiiiiiiiii", val: 50 },
-        ],
-      },
-      {
-        name: "5",
-        children: [
-          { name: "5aaa", val: 50 },
-          { name: "5bbb", val: 50 },
-          { name: "5ccc", val: 50 },
-          { name: "5ddd", val: 50 },
-          { name: "5eee", val: 50 },
-          { name: "5fff", val: 50 },
-          { name: "5g", val: 50 },
-        ],
-      },
-      {
-        name: "5",
-        children: [
-          { name: "5aaa", val: 50 },
-          { name: "5bbb", val: 50 },
-          { name: "5ccc", val: 50 },
-          { name: "5ddd", val: 50 },
-          { name: "5eee", val: 50 },
-          { name: "5fff", val: 50 },
-          { name: "5g", val: 50 },
-          { name: "5g", val: 50 },
-          { name: "5g", val: 50 },
-          { name: "5g", val: 50 },
-          { name: "5g", val: 50 },
-          { name: "5g", val: 50 },
-        ],
-      },
-      {
-        name: "6",
-        children: [
-          { name: "6aaa", val: 50 },
-          { name: "6bbb", val: 50 },
-          { name: "6ccc", val: 50 },
-        ],
-      },
-      {
-        name: "6",
-        children: [
-          { name: "6aaa", val: 50 },
-          { name: "6bbb", val: 50 },
-          { name: "6ccc", val: 50 },
-        ],
-      },
-      {
-        name: "6",
-        children: [
-          { name: "6aaa", val: 50 },
-          { name: "6bbb", val: 50 },
-          { name: "6ccc", val: 50 },
-        ],
-      },
-    ],
-  };
-  // var data_set = {
-  //   name: "main",
-  //   children: [
-  //     { name: "aaa", val: 50 },
-  //     { name: "bbb", val: 50 },
-  //     { name: "ccc", val: 50 },
-  //     // { name: "main", val: 200 },
-  //     { name: "ddd", val: 50 },
-  //     { name: "eee", val: 50 },
-  //     { name: "fff", val: 50 },
-  //     { name: "fff", val: 50 },
-  //   ],
-  // };
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
 
-  var width = 1400,
-    height = 800;
+    <title>Bubble to Do</title>
+  </head>
 
-  var bubble = d3.pack().size([width, height]).padding(20);
-  // var bubble = d3.pack().size([width, height]).padding(20);
+  <body>
+    <!-- <svg width="1600" height="1000"></svg> -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+      var w = window,
+        d = document,
+        e = d.documentElement,
+        BODY = d.getElementsByTagName("body")[0];
+      var width = w.innerWidth || e.clientWidth || BODY.clientWidth;
+      var height = w.innerHeight || e.clientHeight || BODY.clientHeight;
 
-  var nodes = d3.hierarchy(data_set).sum(function (d) {
-    return d.val;
-  });
-  var bubble_data = bubble(nodes).descendants();
+      var svg = d3
+        .select("body")
+        .append("svg")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("x", 0)
+        .attr("y", 0);
 
-  var no_root_bubble = bubble_data.filter(function (d) {
-    return d.parent != null;
-    // return true;
-  });
+      // 1. 描画用のデータ準備
+      var width = document.querySelector("svg").clientWidth;
+      var height = document.querySelector("svg").clientHeight;
+      var nodesData = [];
+      var linksData = [];
+      var nodeDict = {};
 
-  var max_val = d3.max(no_root_bubble, function (d) {
-    return d.r;
-  });
-  var min_val = d3.min(no_root_bubble, function (d) {
-    return d.r;
-  });
-
-  var color_scale = d3
-    .scaleLinear()
-    .domain([min_val, max_val])
-    .range(["yellow", "red"]);
-  var font_scale = d3.scaleLinear().domain([min_val, max_val]).range([9, 28]);
-
-  var bubbles = d3
-    .select("#content")
-    .selectAll(".bubble")
-    .data(no_root_bubble)
-    .enter()
-    .append("g")
-    .attr("class", "bubble")
-    .attr("transform", function (d) {
-      return "translate(" + d.x + "," + d.y + ")";
-    });
-  bubbles
-    .append("circle")
-    .attr("r", function (d) {
-      return d.r;
-    })
-    .style("fill", function (d, i) {
-      return color_scale(d.r);
-    })
-    .style("opacity", 0.5);
-  bubbles
-    .append("text")
-    // .attr("text-anchor", "middle")
-    .attr("text-anchor", function (d) {
-      return "middle";
-    })
-    .attr("dominant-baseline", function (d) {
-      if (d.parent.parent == null) {
-        return "central";
-      } else {
-        return "central";
+      var dataSet = [
+        {
+          name: "p1",
+          children: [
+            { name: "aaa", val: 50 },
+            { name: "bbb", val: 50 },
+          ],
+        },
+        {
+          name: "p2",
+          children: [
+            { name: "aaa", val: 50 },
+            { name: "bbb", val: 50 },
+            { name: "ccc", val: 50 },
+            { name: "ddd", val: 50 },
+          ],
+        },
+        {
+          name: "p3",
+          children: [
+            { name: "aaa", val: 50 },
+            { name: "bbb", val: 50 },
+            { name: "ccc", val: 50 },
+            { name: "ddd", val: 50 },
+            { name: "eee", val: 50 },
+            { name: "fff", val: 50 },
+            { name: "g", val: 50 },
+            { name: "hhhhh", val: 50 },
+            { name: "iiiiiiiiii", val: 50 },
+          ],
+        },
+        {
+          name: "p4",
+          children: [
+            { name: "aaa", val: 50 },
+            { name: "bbb", val: 50 },
+            { name: "ccc", val: 50 },
+            { name: "ddd", val: 50 },
+            { name: "eee", val: 50 },
+            { name: "fff", val: 50 },
+            { name: "g", val: 50 },
+            { name: "hhhhh", val: 50 },
+            { name: "iiiiiiiiii", val: 50 },
+            { name: "iiiiiiiii2", val: 50 },
+            { name: "iiiiiiiii3", val: 50 },
+          ],
+        },
+        {
+          name: "p5",
+          children: [
+            { name: "aaa", val: 50 },
+            { name: "bbb", val: 50 },
+            { name: "ccc", val: 50 },
+            { name: "ddd", val: 50 },
+            { name: "eee", val: 50 },
+            { name: "fff", val: 50 },
+            { name: "g", val: 50 },
+            { name: "hhhhh", val: 50 },
+            { name: "iiiiiiiiii", val: 50 },
+            { name: "iiiiiiiii2", val: 50 },
+            { name: "iiiiiiiii3", val: 50 },
+            { name: "iiiiiiiii4", val: 50 },
+          ],
+        },
+      ];
+      var lenChildren = {};
+      var max_lenchildren = 0;
+      for (parent of dataSet) {
+        lenChildren[parent.name] = parent.children.length;
+        max_lenchildren = Math.max(max_lenchildren, parent.children.length);
+        nodesData.push({
+          name: parent.name,
+          id: parent.name,
+          r: 90 + 25 * Math.round(lenChildren[parent.name] / 3 + 1.5),
+          // r: Math.max(30 * lenChildren[parent.name] + 65, 120),
+          x: width * (Math.random() * 0.6 + 0.2),
+          y: height * (Math.random() * 0.6 + 0.2),
+        });
+        // console.log(parent.children);
+        let c_index = 0;
+        for (children of parent.children) {
+          // console.log(children);
+          nodesData.push({
+            name: parent.name + children.name,
+            id: parent.name + children.name,
+            r: 60,
+            parent_name: parent.name,
+          });
+          linksData.push({
+            source: parent.name,
+            target: parent.name + children.name,
+            l:
+              60 +
+              25 * ((c_index % Math.round(lenChildren[parent.name] / 3)) + 1),
+            // l: 20 * lenChildren[parent.name] * (0.3 + 0.7 * Math.random()),
+          });
+          c_index++;
+        }
       }
-    })
-    // .attr("y", function (d) {
-    //   if (d.parent.parent == null) {
-    //     return d.y - d.r;
-    //   }
-    // })
-    .text(function (d) {
-      return d.data.name;
-    })
-    .style("font-size", function (d) {
-      return font_scale(d.r);
-    });
-</script>
+      // console.log(nodesData["p4"]);
+      // console.log(linksData);
+      console.log(lenChildren);
+
+      // 2. svg要素を配置
+      // 0. 背景
+      d3.select("svg")
+        .append("rect")
+        .attr("width", "100%")
+        .attr("height", "100%")
+        .attr("fill", "lightblue");
+
+      var color_scale = d3
+        .scaleLinear()
+        .domain([0, max_lenchildren])
+        .range(["skyblue", "darkblue"]);
+
+      var link = d3
+        .select("svg")
+        .selectAll("line")
+        .data(linksData)
+        .enter()
+        .append("line")
+        .attr("stroke-width", 1)
+        .attr("stroke", "black")
+        .attr("opacity", 0.0);
+
+      var node = d3
+        .select("svg")
+        .selectAll("circle")
+        .data(nodesData)
+        .enter()
+        .append("circle")
+        .attr("r", function (d) {
+          return d.r;
+        })
+        .attr("fill", function (d) {
+          if (d.parent_name == null) {
+            return color_scale(lenChildren[d.name]);
+          } else {
+            console.log(d.parent_name);
+            return color_scale(lenChildren[d.parent_name]);
+          }
+        })
+        .attr("stroke", "none")
+        .call(
+          d3
+            .drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended)
+        )
+        .attr("opacity", function (d) {
+          if (d.parent_name == null) {
+            return 0.3;
+          } else {
+            return 0.8;
+          }
+        });
+      // 3. forceSimulation設定
+      var simulation = d3
+        .forceSimulation()
+        .force(
+          "link",
+          d3
+            .forceLink()
+            .distance(function (d) {
+              return d.l;
+            })
+            .id(function (d) {
+              return d.name;
+            })
+            .strength(0.3)
+            .iterations(16)
+        )
+        .force(
+          "collide",
+          d3
+            .forceCollide()
+            .radius(function (d) {
+              return d.r;
+            })
+            .strength(0.0)
+
+            // .strength(function (d) {
+            //   if (d.parent_name == null) {
+            //     return 0;
+            //   } else {
+            //     return 0.7;
+            //   }
+            // })
+            .iterations(16)
+        )
+        .force("charge", d3.forceManyBody().strength(-200))
+        .force(
+          "x",
+          d3
+            .forceX()
+            .strength(0.02)
+            .x(width / 2)
+        )
+        .force(
+          "y",
+          d3
+            .forceY()
+            .strength(0.02)
+            .y(height / 2)
+        );
+
+      simulation.nodes(nodesData).on("tick", ticked);
+
+      simulation
+        .force("link")
+        .links(linksData)
+        .id(function (d) {
+          return d.name;
+        });
+
+      // 4. forceSimulation 描画更新用関数
+      function ticked() {
+        link
+          .attr("x1", function (d) {
+            return d.source.x;
+          })
+          .attr("y1", function (d) {
+            return d.source.y;
+          })
+          .attr("x2", function (d) {
+            return d.target.x;
+          })
+          .attr("y2", function (d) {
+            return d.target.y;
+          });
+        node
+          .attr("cx", function (d) {
+            return d.x;
+          })
+          .attr("cy", function (d) {
+            return d.y;
+          });
+      }
+
+      // 5. ドラッグ時のイベント関数
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+
+      function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+    </script>
+  </body>
+</html>
