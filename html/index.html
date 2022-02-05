@@ -5,10 +5,15 @@
 
     <title>Bubble to Do</title>
   </head>
-
+  <style>
+    #title {
+      transform: rotate(0deg);
+    }
+  </style>
   <body>
     <!-- <svg width="1600" height="1000"></svg> -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script type="text/javascript" src="svg-z-order.js"></script>
     <script>
       var w = window,
         d = document,
@@ -21,9 +26,7 @@
         .select("body")
         .append("svg")
         .attr("width", width)
-        .attr("height", height)
-        .attr("x", 0)
-        .attr("y", 0);
+        .attr("height", height);
 
       // 1. 描画用のデータ準備
       var width = document.querySelector("svg").clientWidth;
@@ -34,66 +37,80 @@
 
       var dataSet = [
         {
-          name: "p1",
+          name: "Python",
+          children: [{ name: "このQiitaよさそう" }, { name: "環境構築" }],
+        },
+        {
+          name: "AtCoder",
           children: [
-            { name: "aaa", val: 50 },
-            { name: "bbb", val: 50 },
+            { name: "ABC222", url: "https://atcoder.jp/contests/abc222" },
+            { name: "セグ木拾ってくる" },
+            {
+              name: "まだ解けてない問題",
+              url: "https://atcoder.jp/contests/abc222",
+            },
+            { name: "コンテスト復習" },
           ],
         },
         {
-          name: "p2",
+          name: "人工知能",
           children: [
-            { name: "aaa", val: 50 },
-            { name: "bbb", val: 50 },
-            { name: "ccc", val: 50 },
-            { name: "ddd", val: 50 },
+            { name: "録画01", url: "https://google.com" },
+            { name: "02", url: "https://google.com" },
+            { name: "03", url: "https://google.com" },
+            { name: "04", url: "https://google.com" },
+            { name: "05", url: "https://google.com" },
+            { name: "06", url: "https://google.com" },
+            { name: "07", url: "https://google.com" },
+            { name: "課題2" },
+            { name: "課題3" },
           ],
         },
         {
-          name: "p3",
+          name: "数理手法",
           children: [
-            { name: "aaa", val: 50 },
-            { name: "bbb", val: 50 },
-            { name: "ccc", val: 50 },
-            { name: "ddd", val: 50 },
-            { name: "eee", val: 50 },
-            { name: "fff", val: 50 },
-            { name: "g", val: 50 },
-            { name: "hhhhh", val: 50 },
-            { name: "iiiiiiiiii", val: 50 },
+            { name: "01" },
+            { name: "02" },
+            { name: "03" },
+            { name: "04" },
+            { name: "05" },
+            { name: "06" },
+            { name: "07" },
           ],
         },
         {
-          name: "p4",
+          name: "読みたい",
           children: [
-            { name: "aaa", val: 50 },
-            { name: "bbb", val: 50 },
-            { name: "ccc", val: 50 },
-            { name: "ddd", val: 50 },
-            { name: "eee", val: 50 },
-            { name: "fff", val: 50 },
-            { name: "g", val: 50 },
-            { name: "hhhhh", val: 50 },
-            { name: "iiiiiiiiii", val: 50 },
-            { name: "iiiiiiiii2", val: 50 },
-            { name: "iiiiiiiii3", val: 50 },
+            { name: "例のバグ" },
+            { name: "Docker" },
+            { name: "Ubuntuのやつ" },
+            { name: "VSCode-neovim" },
+            { name: "cssいい感じ" },
+            { name: "資格試験" },
+            { name: "ゲームのレビュー" },
+            { name: "PC Sale" },
           ],
         },
         {
-          name: "p5",
+          name: "To Do",
           children: [
-            { name: "aaa", val: 50 },
-            { name: "bbb", val: 50 },
-            { name: "ccc", val: 50 },
-            { name: "ddd", val: 50 },
-            { name: "eee", val: 50 },
-            { name: "fff", val: 50 },
-            { name: "g", val: 50 },
-            { name: "hhhhh", val: 50 },
-            { name: "iiiiiiiiii", val: 50 },
-            { name: "iiiiiiiii2", val: 50 },
-            { name: "iiiiiiiii3", val: 50 },
-            { name: "iiiiiiiii4", val: 50 },
+            { name: "メール返す" },
+            { name: "ライン返す" },
+            { name: "DM返す" },
+            { name: "ツイートする" },
+            { name: "歯磨き粉買う" },
+          ],
+        },
+        {
+          name: "Wish List",
+          children: [
+            {
+              name: "アルセウス",
+              url: "https://www.pokemon.co.jp/ex/legends_arceus/ja/",
+            },
+            { name: "iPad Pro" },
+            { name: "Thinkpad" },
+            { name: "この本" },
           ],
         },
       ];
@@ -105,6 +122,7 @@
         nodesData.push({
           name: parent.name,
           id: parent.name,
+          text: parent.name,
           r: 90 + 25 * Math.round(lenChildren[parent.name] / 3 + 1.5),
           // r: Math.max(30 * lenChildren[parent.name] + 65, 120),
           x: width * (Math.random() * 0.6 + 0.2),
@@ -114,12 +132,24 @@
         let c_index = 0;
         for (children of parent.children) {
           // console.log(children);
-          nodesData.push({
-            name: parent.name + children.name,
-            id: parent.name + children.name,
-            r: 60,
-            parent_name: parent.name,
-          });
+          if (children.url != null) {
+            nodesData.push({
+              name: parent.name + children.name,
+              text: children.name,
+              id: parent.name + children.name,
+              r: 50,
+              parent_name: parent.name,
+              url: children.url,
+            });
+          } else {
+            nodesData.push({
+              name: parent.name + children.name,
+              text: children.name,
+              id: parent.name + children.name,
+              r: 50,
+              parent_name: parent.name,
+            });
+          }
           linksData.push({
             source: parent.name,
             target: parent.name + children.name,
@@ -136,20 +166,28 @@
       console.log(lenChildren);
 
       // 2. svg要素を配置
-      // 0. 背景
-      d3.select("svg")
+      // 背景i
+      svg
         .append("rect")
         .attr("width", "100%")
         .attr("height", "100%")
         .attr("fill", "lightblue");
+      svg
+        .append("text")
+        .attr("id", "title")
+        .text("BUBBLE TO DO")
+        .attr("x", width / 2)
+        .attr("y", height / 2)
+        .attr("font-size", 70)
+        .attr("fill", "white")
+        .attr("text-anchor", "middle");
 
       var color_scale = d3
         .scaleLinear()
         .domain([0, max_lenchildren])
         .range(["skyblue", "darkblue"]);
 
-      var link = d3
-        .select("svg")
+      var link = svg
         .selectAll("line")
         .data(linksData)
         .enter()
@@ -158,15 +196,17 @@
         .attr("stroke", "black")
         .attr("opacity", 0.0);
 
-      var node = d3
-        .select("svg")
+      var node = svg
         .selectAll("circle")
         .data(nodesData)
         .enter()
+        .append("g")
+        .attr("class", "node_group")
         .append("circle")
         .attr("r", function (d) {
           return d.r;
         })
+
         .attr("fill", function (d) {
           if (d.parent_name == null) {
             return color_scale(lenChildren[d.name]);
@@ -183,13 +223,59 @@
             .on("drag", dragged)
             .on("end", dragended)
         )
+        .attr("onclick", function (d) {
+          return d.parent_name != null;
+        })
+        .on("click", function (d) {
+          if (d.url != null) {
+            window.open(d.url, "_blank").focus();
+          }
+        })
         .attr("opacity", function (d) {
           if (d.parent_name == null) {
             return 0.3;
           } else {
-            return 0.8;
+            return 0.6;
           }
         });
+      var text = svg
+        .selectAll(".node_group")
+        .append("text")
+        .attr("font-size", function (d) {
+          if (d.parent_name == null) {
+            return 30;
+          } else {
+            return 15;
+          }
+        })
+        .on("click", function (d) {
+          if (d.url != null) {
+            window.open(d.url, "_blank").focus();
+          }
+        })
+        // .attr("stroke", "none")
+        .attr("fill", "white")
+        .text(function (d) {
+          console.log(d.name);
+          return d.text;
+        })
+        .attr("x", function (d) {
+          return d.x;
+        })
+        .attr("y", function (d) {
+          return d.y;
+        })
+        .attr("text-anchor", "middle");
+      // node
+      //   .selectAll("text")
+      //   .attr("x", function (d) {
+      //     return d.x + 10;
+      //   })
+      //   .attr("y", function (d) {
+      //     return d.y + 10;
+      //   });
+
+      // d3.select("svg").selectAll("text");
       // 3. forceSimulation設定
       var simulation = d3
         .forceSimulation()
@@ -271,6 +357,13 @@
           .attr("cy", function (d) {
             return d.y;
           });
+        text
+          .attr("x", function (d) {
+            return d.x;
+          })
+          .attr("y", function (d) {
+            return d.y;
+          });
       }
 
       // 5. ドラッグ時のイベント関数
@@ -290,6 +383,22 @@
         d.fx = null;
         d.fy = null;
       }
+      // svg
+      //   .append("img")
+      //   .attr("id", "title")
+      //   .attr("src", "title.svg")
+      //   .attr("width", width / 4)
+      //   .attr("height", height / 4)
+      //   .attr("x", width / 2)
+      //   .attr("y", height / 2);
     </script>
+    <!-- <img
+      src="title3.svg"
+      id="title"
+      width="500"
+      height="250"
+      ondragstart="return false;"
+      ondrop="return false;"
+    /> -->
   </body>
 </html>
