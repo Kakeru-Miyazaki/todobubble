@@ -14,6 +14,8 @@
     <!-- <svg width="1600" height="1000"></svg> -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
+      let Sample_set = false;
+
       var w = window,
         d = document,
         e = d.documentElement,
@@ -34,88 +36,107 @@
       var linksData = [];
       var nodeDict = {};
 
-      var dataSet_ = [
+      if (Sample_set) {
+        localStorage.clear();
+        var dataSet_ = [
+          {
+            name: "Python",
+            children: [{ name: "このQiitaよさそう" }, { name: "環境構築" }],
+          },
+          {
+            name: "AtCoder",
+            children: [
+              { name: "ABC222", url: "https://atcoder.jp/contests/abc222" },
+              { name: "セグ木拾ってくる" },
+              {
+                name: "まだ解けてない問題",
+                url: "https://atcoder.jp/contests/abc222",
+              },
+              { name: "コンテスト復習" },
+            ],
+          },
+          {
+            name: "人工知能",
+            children: [
+              { name: "録画01", url: "https://google.com" },
+              { name: "02", url: "https://google.com" },
+              { name: "03", url: "https://google.com" },
+              { name: "04", url: "https://google.com" },
+              { name: "05", url: "https://google.com" },
+              { name: "06", url: "https://google.com" },
+              { name: "07", url: "https://google.com" },
+              { name: "課題2" },
+              { name: "課題3" },
+            ],
+          },
+          {
+            name: "数理手法",
+            children: [
+              { name: "01" },
+              { name: "02" },
+              { name: "03" },
+              { name: "04" },
+              { name: "05" },
+              { name: "06" },
+              { name: "07" },
+            ],
+          },
+          {
+            name: "読みたい",
+            children: [
+              { name: "例のバグ" },
+              { name: "Docker" },
+              { name: "Ubuntuのやつ" },
+              { name: "VSCode-neovim" },
+              { name: "cssいい感じ" },
+              { name: "資格試験" },
+              { name: "ゲームのレビュー" },
+              { name: "PC Sale" },
+            ],
+          },
+          {
+            name: "To Do",
+            children: [
+              { name: "メール返す" },
+              { name: "ライン返す" },
+              { name: "DM返す" },
+              { name: "ツイートする" },
+              { name: "歯磨き粉買う" },
+            ],
+          },
+          {
+            name: "Wish List",
+            children: [
+              {
+                name: "アルセウス",
+                url: "https://www.pokemon.co.jp/ex/legends_arceus/ja/",
+              },
+              { name: "iPad Pro" },
+              { name: "Thinkpad" },
+              { name: "この本" },
+            ],
+          },
+        ];
+
+        let dataJson = JSON.stringify(dataSet_, undefined, 1);
+        localStorage.setItem("data_set", dataJson);
+      }
+
+      // localStorage.clear();
+      var tutorial_ = [
         {
-          name: "Python",
-          children: [{ name: "このQiitaよさそう" }, { name: "環境構築" }],
-        },
-        {
-          name: "AtCoder",
+          name: "Sample",
           children: [
-            { name: "ABC222", url: "https://atcoder.jp/contests/abc222" },
-            { name: "セグ木拾ってくる" },
-            {
-              name: "まだ解けてない問題",
-              url: "https://atcoder.jp/contests/abc222",
-            },
-            { name: "コンテスト復習" },
-          ],
-        },
-        {
-          name: "人工知能",
-          children: [
-            { name: "録画01", url: "https://google.com" },
-            { name: "02", url: "https://google.com" },
-            { name: "03", url: "https://google.com" },
-            { name: "04", url: "https://google.com" },
-            { name: "05", url: "https://google.com" },
-            { name: "06", url: "https://google.com" },
-            { name: "07", url: "https://google.com" },
-            { name: "課題2" },
-            { name: "課題3" },
-          ],
-        },
-        {
-          name: "数理手法",
-          children: [
-            { name: "01" },
-            { name: "02" },
-            { name: "03" },
-            { name: "04" },
-            { name: "05" },
-            { name: "06" },
-            { name: "07" },
-          ],
-        },
-        {
-          name: "読みたい",
-          children: [
-            { name: "例のバグ" },
-            { name: "Docker" },
-            { name: "Ubuntuのやつ" },
-            { name: "VSCode-neovim" },
-            { name: "cssいい感じ" },
-            { name: "資格試験" },
-            { name: "ゲームのレビュー" },
-            { name: "PC Sale" },
-          ],
-        },
-        {
-          name: "To Do",
-          children: [
-            { name: "メール返す" },
-            { name: "ライン返す" },
-            { name: "DM返す" },
-            { name: "ツイートする" },
-            { name: "歯磨き粉買う" },
-          ],
-        },
-        {
-          name: "Wish List",
-          children: [
-            {
-              name: "アルセウス",
-              url: "https://www.pokemon.co.jp/ex/legends_arceus/ja/",
-            },
-            { name: "iPad Pro" },
-            { name: "Thinkpad" },
-            { name: "この本" },
+            { name: "Click background to Add Large Bubble" },
+            { name: "Goggle", url: "https://google.com" },
+            { name: " Click × to delete me" },
           ],
         },
       ];
-
-      let dataJson = JSON.stringify(dataSet_, undefined, 1);
-      localStorage.setItem("data_set", dataJson);
+      if (!localStorage.hasOwnProperty("data_set")) {
+        let dataJson = JSON.stringify(tutorial_, undefined, 1);
+        localStorage.setItem("data_set", dataJson);
+      }
       var dataSet = JSON.parse(localStorage.getItem("data_set"));
       // dataSet = JSON.parse(dataJson);
       var lenChildren = {};
@@ -225,8 +246,12 @@
           return d.parent_name != null;
         })
         .on("click", function (d) {
-          if (d.url != null) {
-            window.open(d.url, "_blank").focus();
+          if (d.parent_name != null) {
+            if (d.url != null) {
+              window.open(d.url, "_blank").focus();
+            }
+          } else {
+            window.location.href = window.location.href;
           }
         })
         .attr("opacity", function (d) {
@@ -236,6 +261,7 @@
             return 0.6;
           }
         });
+
       var text = svg
         .selectAll(".node_group")
         .append("text")
@@ -247,8 +273,12 @@
           }
         })
         .on("click", function (d) {
-          if (d.url != null) {
-            window.open(d.url, "_blank").focus();
+          if (d.parent_name != null) {
+            if (d.url != null) {
+              window.open(d.url, "_blank").focus();
+            }
+          } else {
+            window.location.href = window.location.href;
           }
         })
         .attr("fill", "white")
@@ -261,6 +291,31 @@
         .attr("y", function (d) {
           return d.y;
         })
+        .attr("text-anchor", "middle");
+      var deleteButton = svg
+        .selectAll(".node_group")
+        .append("text")
+        .attr("font-size", function (d) {
+          if (d.parent_name == null) {
+            return 30;
+          } else {
+            return 15;
+          }
+        })
+        .on("click", function (d) {
+          deleteBubble(d);
+        })
+        .attr("fill", "white")
+        .text(function (d) {
+          return "×";
+        })
+        .attr("x", function (d) {
+          return d.x;
+        })
+        .attr("y", function (d) {
+          return d.y;
+        })
+        .attr("opacity", 0.4)
         .attr("text-anchor", "middle");
 
       // var delbutton = node
@@ -366,6 +421,13 @@
           .attr("y", function (d) {
             return d.y;
           });
+        deleteButton
+          .attr("x", function (d) {
+            return d.x + d.r / 1.414;
+          })
+          .attr("y", function (d) {
+            return d.y - d.r / 2.828;
+          });
       }
 
       // 5. ドラッグ時のイベント関数
@@ -384,6 +446,37 @@
         if (!d3.event.active) simulation.alphaTarget(0);
         d.fx = null;
         d.fy = null;
+      }
+
+      // 6. クリック時のイベント
+      function deleteBubble(d) {
+        console.log("delete", d);
+        var preDataset = localStorage.getItem("data_set");
+        localStorage.setItem("pre_data_set", preDataset);
+        var newDataSet_ = [];
+        for (parent of dataSet) {
+          if (parent.name != d.name) {
+            let pushContent = { name: parent.name, children: [] };
+            for (children of parent.children) {
+              if (!(children.name == d.text && parent.name == d.parent_name)) {
+                pushContent["children"].push(children);
+              } else {
+                console.log(children);
+              }
+            }
+            newDataSet_.push(pushContent);
+          }
+        }
+        let newDataSet = JSON.stringify(newDataSet_, undefined, 1);
+        localStorage.setItem("data_set", newDataSet);
+        console.log(newDataSet_);
+        windowReload();
+      }
+      function appendChildrenBubble(d) {}
+      function appendParentBubble() {}
+
+      function windowReload() {
+        window.location.href = window.location.href;
       }
     </script>
   </body>
