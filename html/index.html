@@ -16,7 +16,7 @@
     <div id="mask" class="hidden" onclick="exit()"></div>
     <section id="modal1" class="hidden modal">
       <p>
-        <strong class="center">セクションの追加</strong>
+        <div><strong class="center">Add Section</strong></div>
         <br />
         <input type="text" id="inputParentName" />
         <br />
@@ -25,12 +25,14 @@
     </section>
     <section id="modal2" class="hidden modal">
       <p>
-        <strong><div id="parentnameOnInput"></div> </strong>
+        <div id="parentnameOnInput"><strong></strong></div> 
         <br />
-        <span><span>名前</span></span>
+        Name
         <input type="text" id="inputChildrenName" />
         <br />
-        <span><span>URL</span></span>
+        <span
+          ><span><span id="urlbuf">URL</span></span></span
+        >
         <input type="text" id="inputURL" />
         <br />
       </p>
@@ -156,7 +158,7 @@
           name: "Sample",
           children: [
             { name: "Click background to Add Large Bubble" },
-            { name: "Goggle", url: "https://google.com" },
+            { name: "Google", url: "https://google.com" },
             { name: " Click × to delete me" },
           ],
         },
@@ -533,7 +535,7 @@
         document.getElementById("inputChildrenName").value = "";
         document.getElementById("inputURL").value = "";
         document.getElementById("parentnameOnInput").innerHTML =
-          pname + " への追加";
+          "Add to " + pname ;
         document.getElementById("mask").style.display = "block";
         document.getElementById("modal2").style.display = "block";
       }
@@ -632,6 +634,5 @@
         document.getElementById("modal2").style.display = "none";
       }
     </script>
-    <!-- <script src="./modal.js"></script> -->
   </body>
 </html>
