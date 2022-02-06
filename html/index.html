@@ -608,7 +608,7 @@
 
         for (parent of newDataSet) {
           if (parent.name == pname) {
-            if (new_children_url == null) {
+            if (new_children_url == "") {
               parent.children.push({ name: new_children_name });
             } else {
               parent.children.push({
