@@ -10,7 +10,37 @@
       user-select: none;
     }
   </style>
+  <link rel="stylesheet" href="modal.css" />
+
   <body>
+    <div id="mask" class="hidden" onclick="exit()"></div>
+    <section id="modal1" class="hidden modal">
+      <p>
+        <strong>親バブルの追加</strong>
+        <br />
+        <input type="text" id="inputParentName" />
+        <br />
+      </p>
+      <div id="close1" class="close" onclick="registerParent()">Register</div>
+    </section>
+    <!-- <section id="modal2" class="hidden modal"> -->
+    <!-- <p>
+        <strong>使い方</strong><br />
+        1. 集合する複数人の最寄り駅をクリックする．<br />
+        2. RUNボタンを押す．<br />
+        <br />
+        最も早く集合できる駅が
+        <strong><span class="textGreen">黄緑色</div>
+        </strong>
+        で表示され，<br />集まりやすい大きな駅が
+        <strong>
+          <span class="textPuple">紫色</div>
+          </strong>
+          で表示されます．
+        </p>
+        <div id="close1" class="close" onclick="registerChildren()">Register</div>
+    </section> -->
+
     <!-- <svg width="1600" height="1000"></svg> -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
@@ -35,7 +65,8 @@
       var nodesData = [];
       var linksData = [];
       var nodeDict = {};
-
+      var parentNameSet = new Set();
+      var childrenNameSet = new Set();
       if (Sample_set) {
         localStorage.clear();
         var dataSet_ = [
@@ -142,6 +173,7 @@
       var lenChildren = {};
       var max_lenchildren = 0;
       for (parent of dataSet) {
+        parentNameSet.add(parent.name);
         lenChildren[parent.name] = parent.children.length;
         max_lenchildren = Math.max(max_lenchildren, parent.children.length);
         nodesData.push({
@@ -176,6 +208,7 @@
               parent_name: parent.name,
             });
           }
+          childrenNameSet.add(parent.name + children.name);
           linksData.push({
             source: parent.name,
             target: parent.name + children.name,
@@ -196,6 +229,9 @@
         .append("rect")
         .attr("width", "100%")
         .attr("height", "100%")
+        .on("click", function (d) {
+          appendParentBubble();
+        })
         .attr("fill", "lightblue");
       svg
         .append("text")
@@ -205,7 +241,10 @@
         .attr("y", height / 2)
         .attr("font-size", 80)
         .attr("fill", "white")
-        .attr("text-anchor", "middle");
+        .attr("text-anchor", "middle")
+        .on("click", function (d) {
+          appendParentBubble();
+        });
 
       var color_scale = d3
         .scaleLinear()
@@ -231,7 +270,6 @@
         .attr("r", function (d) {
           return d.r;
         })
-
         .attr("fill", function (d) {
           if (d.parent_name == null) {
             return color_scale(lenChildren[d.name]);
@@ -460,7 +498,7 @@
         var newDataSet_ = [];
         for (parent of dataSet) {
           if (parent.name != d.name) {
-            let pushContent = { name: parent.name, children: [] };
+            var pushContent = { name: parent.name, children: [] };
             for (children of parent.children) {
               if (!(children.name == d.text && parent.name == d.parent_name)) {
                 pushContent["children"].push(children);
@@ -469,22 +507,91 @@
               }
             }
             // console.log(pushContent.children.length);
-            if (pushContent.children.length != 0) {
+            if (
+              !(
+                pushContent.children.length != 0 &&
+                (pushContent.name == d.name ||
+                  pushContent.name == d.parent_name)
+              )
+            ) {
               newDataSet_.push(pushContent);
             }
           }
         }
-        let newDataSet = JSON.stringify(newDataSet_, undefined, 1);
+        var newDataSet = JSON.stringify(newDataSet_, undefined, 1);
         localStorage.setItem("data_set", newDataSet);
         console.log(newDataSet_);
         windowReload();
       }
+      function appendParentBubble(d) {
+        console.log("appendParentBubble");
+        document.getElementById("inputParentName").value = "";
+
+        document.getElementById("mask").style.display = "block";
+        document.getElementById("modal1").style.display = "block";
+      }
       function appendChildrenBubble(d) {}
-      function appendParentBubble() {}
+
+      function registerParent() {
+        console.log("register");
+        let new_parent_name = document.getElementById("inputParentName").value;
+
+        console.log(new_parent_name);
+        if (new_parent_name == "") {
+          document.getElementById("inputParentName").value = "Empty input";
+          return 1;
+        }
+        if (parentNameSet.has(new_parent_name)) {
+          document.getElementById("inputParentName").value = "Already exists";
+          return 1;
+        }
+        if (
+          new_parent_name == "Empty input" ||
+          new_parent_name == "Already exists"
+        ) {
+          return 1;
+        }
+
+        document.getElementById("mask").style.display = "none";
+        document.getElementById("modal1").style.display = "none";
+
+        var preDataset = localStorage.getItem("data_set");
+        localStorage.setItem("pre_data_set", preDataset);
+        console.log(dataSet);
+
+        var newDataSet = dataSet;
+        newDataSet.push({ name: new_parent_name, children: [] });
+        // for (parent of dataSet) {
+        //   if (parent.name != d.name) {
+        //     let pushContent = { name: parent.name, children: [] };
+        //     for (children of parent.children) {
+        //       if (!(children.name == d.text && parent.name == d.parent_name)) {
+        //         pushContent["children"].push(children);
+        //       } else {
+        //         console.log(children);
+        //       }
+        //     }
+        //     // console.log(pushContent.children.length);
+        //     if (pushContent.children.length != 0) {
+        //       newDataSet_.push(pushContent);
+        //     }
+        //   }
+        // }
+        var newDataSet_ = JSON.stringify(newDataSet, undefined, 1);
+        localStorage.setItem("data_set", newDataSet_);
+        windowReload();
+      }
+      function registerChildren() {}
 
       function windowReload() {
         window.location.href = window.location.href;
       }
+
+      function exit() {
+        document.getElementById("mask").style.display = "none";
+        document.getElementById("modal1").style.display = "none";
+      }
     </script>
+    <!-- <script src="./modal.js"></script> -->
   </body>
 </html>
