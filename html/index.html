@@ -6,9 +6,6 @@
     <title>Bubble to Do</title>
   </head>
   <style>
-    #title {
-      transform: rotate(0deg);
-    }
     html {
       user-select: none;
     }
@@ -37,7 +34,7 @@
       var linksData = [];
       var nodeDict = {};
 
-      var dataSet = [
+      var dataSet_ = [
         {
           name: "Python",
           children: [{ name: "このQiitaよさそう" }, { name: "環境構築" }],
@@ -116,6 +113,11 @@
           ],
         },
       ];
+
+      let dataJson = JSON.stringify(dataSet_, undefined, 1);
+      localStorage.setItem("data_set", dataJson);
+      var dataSet = JSON.parse(localStorage.getItem("data_set"));
+      // dataSet = JSON.parse(dataJson);
       var lenChildren = {};
       var max_lenchildren = 0;
       for (parent of dataSet) {
@@ -130,10 +132,8 @@
           x: width * (Math.random() * 0.6 + 0.2),
           y: height * (Math.random() * 0.6 + 0.2),
         });
-        // console.log(parent.children);
         let c_index = 0;
         for (children of parent.children) {
-          // console.log(children);
           if (children.url != null) {
             nodesData.push({
               name: parent.name + children.name,
@@ -163,12 +163,9 @@
           c_index++;
         }
       }
-      // console.log(nodesData["p4"]);
-      // console.log(linksData);
-      console.log(lenChildren);
 
       // 2. svg要素を配置
-      // 背景i
+      // 背景
       svg
         .append("rect")
         .attr("width", "100%")
@@ -180,7 +177,7 @@
         .text("BUBBLE TO DO")
         .attr("x", width / 2)
         .attr("y", height / 2)
-        .attr("font-size", 70)
+        .attr("font-size", 80)
         .attr("fill", "white")
         .attr("text-anchor", "middle");
 
@@ -213,7 +210,6 @@
           if (d.parent_name == null) {
             return color_scale(lenChildren[d.name]);
           } else {
-            console.log(d.parent_name);
             return color_scale(lenChildren[d.parent_name]);
           }
         })
@@ -255,10 +251,8 @@
             window.open(d.url, "_blank").focus();
           }
         })
-        // .attr("stroke", "none")
         .attr("fill", "white")
         .text(function (d) {
-          console.log(d.name);
           return d.text;
         })
         .attr("x", function (d) {
@@ -268,17 +262,24 @@
           return d.y;
         })
         .attr("text-anchor", "middle");
-      // node
-      //   .selectAll("text")
+
+      // var delbutton = node
+      //   .selectAll(".node_group")
+      //   .append("circle")
+      //   .attr("r", 10)
+      //   .on("click", function (d) {
+      //     if (d.url != null) {
+      //       window.open(d.url, "_blank").focus();
+      //     }
+      //   })
+      //   .attr("fill", "yellow")
       //   .attr("x", function (d) {
       //     return d.x + 10;
       //   })
       //   .attr("y", function (d) {
-      //     return d.y + 10;
+      //     return d.y - 10;
       //   });
 
-      // d3.select("svg").selectAll("text");
-      // 3. forceSimulation設定
       var simulation = d3
         .forceSimulation()
         .force(
@@ -302,7 +303,6 @@
               return d.r;
             })
             .strength(0.0)
-
             // .strength(function (d) {
             //   if (d.parent_name == null) {
             //     return 0;
@@ -317,14 +317,14 @@
           "x",
           d3
             .forceX()
-            .strength(0.02)
+            .strength(0.03)
             .x(width / 2)
         )
         .force(
           "y",
           d3
             .forceY()
-            .strength(0.02)
+            .strength(0.03)
             .y(height / 2)
         );
 
@@ -385,22 +385,6 @@
         d.fx = null;
         d.fy = null;
       }
-      // svg
-      //   .append("img")
-      //   .attr("id", "title")
-      //   .attr("src", "title.svg")
-      //   .attr("width", width / 4)
-      //   .attr("height", height / 4)
-      //   .attr("x", width / 2)
-      //   .attr("y", height / 2);
     </script>
-    <!-- <img
-      src="title3.svg"
-      id="title"
-      width="500"
-      height="250"
-      ondragstart="return false;"
-      ondrop="return false;"
-    /> -->
   </body>
 </html>
