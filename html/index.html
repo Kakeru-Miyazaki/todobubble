@@ -507,11 +507,11 @@
             }
             // console.log(pushContent.children.length);
             if (
-              !(
-                pushContent.children.length != 0 &&
-                (pushContent.name == d.name ||
-                  pushContent.name == d.parent_name)
-              )
+              true
+              // !(
+              //   pushContent.children.length != 0 &&
+              //   parent.name == d.parent_name
+              // )
             ) {
               newDataSet_.push(pushContent);
             }
@@ -522,6 +522,7 @@
         console.log(newDataSet_);
         windowReload();
       }
+      
       function appendParentBubble(d) {
         console.log("appendParentBubble");
         document.getElementById("inputParentName").value = "";
