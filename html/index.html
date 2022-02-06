@@ -154,6 +154,7 @@
           y: height * (Math.random() * 0.6 + 0.2),
         });
         let c_index = 0;
+
         for (children of parent.children) {
           if (children.url != null) {
             nodesData.push({
@@ -163,6 +164,8 @@
               r: 50,
               parent_name: parent.name,
               url: children.url,
+              x: 0.2 + 0.6 * Math.random() * width,
+              y: 0.2 + 0.6 * Math.random() * height,
             });
           } else {
             nodesData.push({
@@ -178,7 +181,9 @@
             target: parent.name + children.name,
             l:
               60 +
-              25 * ((c_index % Math.round(lenChildren[parent.name] / 3)) + 1),
+              25 *
+                ((c_index % Math.round((lenChildren[parent.name] + 1) / 3)) +
+                  1),
             // l: 20 * lenChildren[parent.name] * (0.3 + 0.7 * Math.random()),
           });
           c_index++;
@@ -256,7 +261,7 @@
         })
         .attr("opacity", function (d) {
           if (d.parent_name == null) {
-            return 0.3;
+            return 0.4;
           } else {
             return 0.6;
           }
@@ -382,7 +387,7 @@
             .strength(0.03)
             .y(height / 2)
         );
-
+      // .force("center", d3.forceCenter(width / 2, height / 2))
       simulation.nodes(nodesData).on("tick", ticked);
 
       simulation
@@ -450,7 +455,6 @@
 
       // 6. クリック時のイベント
       function deleteBubble(d) {
-        console.log("delete", d);
         var preDataset = localStorage.getItem("data_set");
         localStorage.setItem("pre_data_set", preDataset);
         var newDataSet_ = [];
@@ -464,7 +468,10 @@
                 console.log(children);
               }
             }
-            newDataSet_.push(pushContent);
+            // console.log(pushContent.children.length);
+            if (pushContent.children.length != 0) {
+              newDataSet_.push(pushContent);
+            }
           }
         }
         let newDataSet = JSON.stringify(newDataSet_, undefined, 1);
