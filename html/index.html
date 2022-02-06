@@ -16,35 +16,31 @@
     <div id="mask" class="hidden" onclick="exit()"></div>
     <section id="modal1" class="hidden modal">
       <p>
-        <strong>親バブルの追加</strong>
+        <strong class="center">セクションの追加</strong>
         <br />
         <input type="text" id="inputParentName" />
         <br />
       </p>
       <div id="close1" class="close" onclick="registerParent()">Register</div>
     </section>
-    <!-- <section id="modal2" class="hidden modal"> -->
-    <!-- <p>
-        <strong>使い方</strong><br />
-        1. 集合する複数人の最寄り駅をクリックする．<br />
-        2. RUNボタンを押す．<br />
+    <section id="modal2" class="hidden modal">
+      <p>
+        <strong><div id="parentnameOnInput"></div> </strong>
         <br />
-        最も早く集合できる駅が
-        <strong><span class="textGreen">黄緑色</div>
-        </strong>
-        で表示され，<br />集まりやすい大きな駅が
-        <strong>
-          <span class="textPuple">紫色</div>
-          </strong>
-          で表示されます．
-        </p>
-        <div id="close1" class="close" onclick="registerChildren()">Register</div>
-    </section> -->
+        <span><span>名前</span></span>
+        <input type="text" id="inputChildrenName" />
+        <br />
+        <span><span>URL</span></span>
+        <input type="text" id="inputURL" />
+        <br />
+      </p>
+      <div id="close2" class="close" onclick="registerChildren()">Register</div>
+    </section>
 
     <!-- <svg width="1600" height="1000"></svg> -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
-      let Sample_set = false;
+      var Sample_set = false;
 
       var w = window,
         d = document,
@@ -67,6 +63,7 @@
       var nodeDict = {};
       var parentNameSet = new Set();
       var childrenNameSet = new Set();
+      var pname = "";
       if (Sample_set) {
         localStorage.clear();
         var dataSet_ = [
@@ -149,7 +146,7 @@
           },
         ];
 
-        let dataJson = JSON.stringify(dataSet_, undefined, 1);
+        var dataJson = JSON.stringify(dataSet_, undefined, 1);
         localStorage.setItem("data_set", dataJson);
       }
 
@@ -165,7 +162,7 @@
         },
       ];
       if (!localStorage.hasOwnProperty("data_set")) {
-        let dataJson = JSON.stringify(tutorial_, undefined, 1);
+        var dataJson = JSON.stringify(tutorial_, undefined, 1);
         localStorage.setItem("data_set", dataJson);
       }
       var dataSet = JSON.parse(localStorage.getItem("data_set"));
@@ -185,7 +182,7 @@
           x: width * (Math.random() * 0.6 + 0.2),
           y: height * (Math.random() * 0.6 + 0.2),
         });
-        let c_index = 0;
+        var c_index = 0;
 
         for (children of parent.children) {
           if (children.url != null) {
@@ -294,7 +291,7 @@
               window.open(d.url, "_blank").focus();
             }
           } else {
-            window.location.href = window.location.href;
+            appendChildrenBubble(d);
           }
         })
         .attr("opacity", function (d) {
@@ -321,7 +318,7 @@
               window.open(d.url, "_blank").focus();
             }
           } else {
-            window.location.href = window.location.href;
+            appendChildrenBubble(d);
           }
         })
         .attr("fill", "white")
@@ -530,11 +527,20 @@
         document.getElementById("mask").style.display = "block";
         document.getElementById("modal1").style.display = "block";
       }
-      function appendChildrenBubble(d) {}
+
+      function appendChildrenBubble(d) {
+        pname = d.name;
+        document.getElementById("inputChildrenName").value = "";
+        document.getElementById("inputURL").value = "";
+        document.getElementById("parentnameOnInput").innerHTML =
+          pname + " への追加";
+        document.getElementById("mask").style.display = "block";
+        document.getElementById("modal2").style.display = "block";
+      }
 
       function registerParent() {
         console.log("register");
-        let new_parent_name = document.getElementById("inputParentName").value;
+        var new_parent_name = document.getElementById("inputParentName").value;
 
         console.log(new_parent_name);
         if (new_parent_name == "") {
@@ -561,27 +567,60 @@
 
         var newDataSet = dataSet;
         newDataSet.push({ name: new_parent_name, children: [] });
-        // for (parent of dataSet) {
-        //   if (parent.name != d.name) {
-        //     let pushContent = { name: parent.name, children: [] };
-        //     for (children of parent.children) {
-        //       if (!(children.name == d.text && parent.name == d.parent_name)) {
-        //         pushContent["children"].push(children);
-        //       } else {
-        //         console.log(children);
-        //       }
-        //     }
-        //     // console.log(pushContent.children.length);
-        //     if (pushContent.children.length != 0) {
-        //       newDataSet_.push(pushContent);
-        //     }
-        //   }
-        // }
         var newDataSet_ = JSON.stringify(newDataSet, undefined, 1);
         localStorage.setItem("data_set", newDataSet_);
         windowReload();
       }
-      function registerChildren() {}
+
+      // pname is global val of parent name
+      function registerChildren() {
+        var new_children_name =
+          document.getElementById("inputChildrenName").value;
+        var new_children_url = document.getElementById("inputURL").value;
+
+        console.log(new_children_name);
+        if (new_children_name == "") {
+          document.getElementById("inputChilrenName").value = "Empty input";
+          return 1;
+        }
+        if (childrenNameSet.has(pname + new_children_name)) {
+          document.getElementById("inputChildrenName").value = "Already exists";
+          return 1;
+        }
+        if (
+          new_children_name == "Empty input" ||
+          new_children_name == "Already exists"
+        ) {
+          return 1;
+        }
+
+        document.getElementById("mask").style.display = "none";
+        document.getElementById("modal1").style.display = "none";
+
+        var preDataset = localStorage.getItem("data_set");
+        localStorage.setItem("pre_data_set", preDataset);
+        console.log(dataSet);
+
+        var newDataSet = dataSet;
+        // newDataSet.push({ name: new_parent_name, children: [] });
+
+        for (parent of newDataSet) {
+          if (parent.name == pname) {
+            if (new_children_url == null) {
+              parent.children.push({ name: new_children_name });
+            } else {
+              parent.children.push({
+                name: new_children_name,
+                url: new_children_url,
+              });
+            }
+          }
+        }
+
+        var newDataSet_ = JSON.stringify(newDataSet, undefined, 1);
+        localStorage.setItem("data_set", newDataSet_);
+        windowReload();
+      }
 
       function windowReload() {
         window.location.href = window.location.href;
@@ -590,6 +629,7 @@
       function exit() {
         document.getElementById("mask").style.display = "none";
         document.getElementById("modal1").style.display = "none";
+        document.getElementById("modal2").style.display = "none";
       }
     </script>
     <!-- <script src="./modal.js"></script> -->

@@ -30,14 +30,6 @@
   /* padding-right: 100px; */
 }
 
-.close {
-  border: 1px solid#fff;
-  /* width: 140px; */
-  width: auto;
-  padding: 20px;
-  text-align: center;
-}
-
 #mask {
   background: rgba(0, 0, 0, 0.4);
   position: fixed;
@@ -68,8 +60,16 @@
   text-align: center;
 }
 
-#close1 {
+.close {
+  border: 1px solid#fff;
+  /* width: 140px; */
+  width: auto;
+  padding: 20px;
+  text-align: center;
   font-size: 25px;
+}
+.center {
+  text-align: center;
 }
 
 .modal p {
@@ -86,4 +86,5 @@
 
 input {
   font-size: 25px;
+  margin: 5px;
 }
