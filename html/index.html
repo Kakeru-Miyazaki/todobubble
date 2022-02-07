@@ -151,8 +151,71 @@
         var dataJson = JSON.stringify(dataSet_, undefined, 1);
         localStorage.setItem("data_set", dataJson);
       }
-
-      // document.getElementsByClassName("modal")[0].style.background = "#rgba(20,20,27,0.7)";
+      var colorlist = {
+        blue:{
+          bg:"lightblue",
+          min:"skyblue",
+          max:"darkblue",
+          modal:"rgba(1, 20, 107, 0.7)"
+        },
+        darkblue:{
+          bg:"#000033",
+          min:"skyblue",
+          max:"navy",
+          modal:"rgba(1, 15, 80, 0.7)"
+        },
+        green:{
+          bg:"lightgreen",
+          min:"yellowgreen",
+          max:"darkgreen",
+          modal:"rgba(3, 115, 5, 0.7)"
+        },
+        darkgreen:{
+          bg:"green",
+          min:"lightgreen",
+          max:"darkgreen",
+          modal:"rgba(3, 115, 5, 0.7)"
+        },
+        red:{
+          bg:"brown",
+          min:"red",
+          max:"darkred",
+          modal:"rgba(170, 2, 2, 0.7)"
+        },
+        darkred:{
+          bg:"darkred",
+          min:"brown",
+          max:"red",
+          modal:"rgba(197, 0, 0, 0.7)"
+        },
+        black:{
+          bg:"black",
+          min:"grey",
+          max:"darkgrey",
+          modal:"rgba(90, 90, 90, 0.7)"
+        },
+        simple:{
+          bg:"darkgrey",
+          min:"white",
+          max:"black",
+          modal:"rgba(0, 0, 0, 0.7)"
+        },
+        yellow:{
+          bg:"lightyellow",
+          min:"gold",
+          max:"orange",
+          modal:"rgba(255, 136, 0, 0.7)"
+        },
+        pink:{
+          bg:"lavenderblush",
+          min:"navajowhite",
+          max:"lightpink",
+          modal:"rgba(248, 53, 124, 0.7)"
+        }
+      }
+      var colortheme = "blue"
+      document.getElementsByClassName("modal")[0].style.background = colorlist[colortheme]["modal"];
+      document.getElementsByClassName("modal")[1].style.background = colorlist[colortheme]["modal"];
       // document.getElementsByClassName("modal")[1].style.background = "red";
       // localStorage.clear();
       var tutorial_ = [
@@ -236,7 +299,7 @@
         .on("click", function (d) {
           appendParentBubble();
         })
-        .attr("fill", "lightblue");
+        .attr("fill", colorlist[colortheme]["bg"]);
       svg
         .append("text")
         .attr("id", "title")
@@ -253,7 +316,7 @@
       var color_scale = d3
         .scaleLinear()
         .domain([0, max_lenchildren])
-        .range(["skyblue", "darkblue"]);
+        .range([colorlist[colortheme]["min"], colorlist[colortheme]["max"]]);
 
       var link = svg
         .selectAll("line")
