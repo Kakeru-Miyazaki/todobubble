@@ -3,3 +3,10 @@
   right: 50px;
   bottom: 50px;
 }
+
+#colorTheme {
+  position: absolute;
+  text-align: right;
+  right: 15px;
+  top: 25px;
+}

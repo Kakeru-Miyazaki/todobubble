@@ -39,6 +39,23 @@
       </p>
       <div id="close2" class="close" onclick="registerChildren()">Register</div>
     </section>
+
+
+
+
+    <div id="colorTheme">
+      <img src="../fig/blue.svg" width="25" height="25" id="blue" onclick="setColor(this.id)"></src>
+      <img src="../fig/darkblue.svg" width="25" height="25" id="darkblue" onclick="setColor(this.id)"></src>
+      <img src="../fig/green.svg" width="25" height="25" id="green" onclick="setColor(this.id)"></src>
+      <img src="../fig/darkgreen.svg" width="25" height="25" id="darkgreen" onclick="setColor(this.id)"></src>
+      <img src="../fig/yellow.svg" width="25" height="25" id="yellow" onclick="setColor(this.id)"></src>
+      <!-- <br> -->
+      <img src="../fig/pink.svg" width="25" height="25" id="pink" onclick="setColor(this.id)"></src>
+      <img src="../fig/red.svg" width="25" height="25" id="red" onclick="setColor(this.id)"></src>
+      <img src="../fig/darkred.svg" width="25" height="25" id="darkred" onclick="setColor(this.id)"></src>
+      <img src="../fig/simple.svg" width="25" height="25" id="simple" onclick="setColor(this.id)"></src>
+      <img src="../fig/black.svg" width="25" height="25" id="black" onclick="setColor(this.id)"></src>
+    </div>
     <img src="../fig/undo.svg" width="50" height="50" id="undoicon" onclick="undo()"></src>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
@@ -176,6 +193,18 @@
           max:"darkgreen",
           modal:"rgba(3, 115, 5, 0.7)"
         },
+        yellow:{
+          bg:"lightyellow",
+          min:"gold",
+          max:"orange",
+          modal:"rgba(255, 136, 0, 0.7)"
+        },
+        pink:{
+          bg:"lavenderblush",
+          min:"navajowhite",
+          max:"lightpink",
+          modal:"rgba(248, 53, 124, 0.7)"
+        },
         red:{
           bg:"brown",
           min:"red",
@@ -188,32 +217,25 @@
           max:"red",
           modal:"rgba(197, 0, 0, 0.7)"
         },
-        black:{
-          bg:"black",
-          min:"grey",
-          max:"darkgrey",
-          modal:"rgba(90, 90, 90, 0.7)"
-        },
         simple:{
           bg:"darkgrey",
           min:"white",
           max:"black",
           modal:"rgba(0, 0, 0, 0.7)"
         },
-        yellow:{
-          bg:"lightyellow",
-          min:"gold",
-          max:"orange",
-          modal:"rgba(255, 136, 0, 0.7)"
+        black:{
+          bg:"black",
+          min:"grey",
+          max:"darkgrey",
+          modal:"rgba(90, 90, 90, 0.7)"
         },
-        pink:{
-          bg:"lavenderblush",
-          min:"navajowhite",
-          max:"lightpink",
-          modal:"rgba(248, 53, 124, 0.7)"
-        }
       }
-      var colortheme = "blue"
+      
+      if (!localStorage.hasOwnProperty("colortheme")) {
+        localStorage.setItem("colortheme", "blue");
+      }
+      var colortheme = localStorage.getItem("colortheme");
+
       document.getElementsByClassName("modal")[0].style.background = colorlist[colortheme]["modal"];
       document.getElementsByClassName("modal")[1].style.background = colorlist[colortheme]["modal"];
       // document.getElementsByClassName("modal")[1].style.background = "red";
@@ -681,6 +703,11 @@
 
         var newDataSet_ = JSON.stringify(newDataSet, undefined, 1);
         localStorage.setItem("data_set", newDataSet_);
+        windowReload();
+      }
+
+      function setColor(colorname){
+        localStorage.setItem("colortheme",colorname);
         windowReload();
       }
 
