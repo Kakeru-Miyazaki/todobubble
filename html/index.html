@@ -4,9 +4,6 @@
     <meta charset="utf-8" />
 
     <title>Bubble to Do</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Lora&family=Ubuntu:wght@300&display=swap" rel="stylesheet">
   </head>
   <style>
     html {
@@ -262,13 +259,37 @@
       document.getElementsByClassName("modal")[0].style.background = colorlist[colortheme]["modal"];
       document.getElementsByClassName("modal")[1].style.background = colorlist[colortheme]["modal"];
       // localStorage.clear();
+      // localStorage.clear();
       var tutorial_ = [
         {
           name: "Sample",
           children: [
-            { name: "Click background to Add Large Bubble" },
+            { name: "Yahoo",url:"https://yahoo.co.jp" },
             { name: "Google", url: "https://google.com" },
-            { name: " Click × to delete me" },
+          ],
+        },
+        {
+          name: "Click me",
+          children: [
+            { name: "Click me (Jump to Google)",url:"https://google.com" },
+            { name: "Click large bubble → Small bubble" },
+            { name: "Click background!!" },
+          ],
+        },
+        {
+          name:"Drag me",
+          children:[
+            {name:"Delete me"},
+            {name:"Color theme ↗︎ "},
+            {name:" ↖︎ Undo Redo"}
+          ]
+        },
+        {
+          name: "about",
+          children: [
+            { name: "Author:kakekakemiya" },
+            { name: "GitHub",url:"https://github.com/Kakeru-Miyazaki" },
+            { name: "Qiita",url:"https://qiita.com/kakekakemiya" },
           ],
         },
       ];
