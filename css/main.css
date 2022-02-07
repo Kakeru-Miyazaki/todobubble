@@ -10,3 +10,9 @@
   right: 15px;
   top: 25px;
 }
+
+body {
+  height: auto;
+  width: auto;
+  background-color: "red";
+}

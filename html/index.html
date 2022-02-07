@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="./../css/main.css" />
   <link rel="stylesheet" href="./../css/modal.css" />
 
-  <body>
+  <body bgcolor="white">
     <div id="mask" class="hidden" onclick="exit()"></div>
     <section id="modal1" class="hidden modal">
       <p>
@@ -195,7 +195,7 @@
         },
         yellow:{
           bg:"lightyellow",
-          min:"gold",
+          min:"yellow",
           max:"orange",
           modal:"rgba(255, 136, 0, 0.7)"
         },
@@ -214,19 +214,19 @@
         darkred:{
           bg:"darkred",
           min:"brown",
-          max:"red",
+          max:"black",
           modal:"rgba(197, 0, 0, 0.7)"
         },
         simple:{
-          bg:"darkgrey",
+          bg:"grey",
           min:"white",
           max:"black",
           modal:"rgba(0, 0, 0, 0.7)"
         },
         black:{
           bg:"black",
-          min:"grey",
-          max:"darkgrey",
+          min:"white",
+          max:"#222222",
           modal:"rgba(90, 90, 90, 0.7)"
         },
       }
@@ -235,7 +235,7 @@
         localStorage.setItem("colortheme", "blue");
       }
       var colortheme = localStorage.getItem("colortheme");
-
+      document.body.bgColor = colorlist[colortheme]["bg"]; 
       document.getElementsByClassName("modal")[0].style.background = colorlist[colortheme]["modal"];
       document.getElementsByClassName("modal")[1].style.background = colorlist[colortheme]["modal"];
       // document.getElementsByClassName("modal")[1].style.background = "red";
@@ -337,7 +337,7 @@
 
       var color_scale = d3
         .scaleLinear()
-        .domain([0, max_lenchildren])
+        .domain([-2, max_lenchildren])
         .range([colorlist[colortheme]["min"], colorlist[colortheme]["max"]]);
 
       var link = svg
@@ -363,7 +363,7 @@
           if (d.parent_name == null) {
             return color_scale(lenChildren[d.name]);
           } else {
-            return color_scale(lenChildren[d.parent_name]);
+            return color_scale(lenChildren[d.parent_name]-2);
           }
         })
         .attr("stroke", "none")
@@ -388,9 +388,9 @@
         })
         .attr("opacity", function (d) {
           if (d.parent_name == null) {
-            return 0.4;
+            return 0.9;
           } else {
-            return 0.6;
+            return 0.8;
           }
         });
 
@@ -429,9 +429,9 @@
         .append("text")
         .attr("font-size", function (d) {
           if (d.parent_name == null) {
-            return 30;
+            return 35;
           } else {
-            return 15;
+            return 20;
           }
         })
         .on("click", function (d) {
