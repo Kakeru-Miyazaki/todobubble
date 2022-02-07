@@ -56,8 +56,12 @@
       <img src="../fig/simple.svg" width="25" height="25" id="simple" onclick="setColor(this.id)"></src>
       <img src="../fig/black.svg" width="25" height="25" id="black" onclick="setColor(this.id)"></src>
     </div>
-    <img src="../fig/undo.svg" width="50" height="50" id="undoicon" onclick="undo()"></src>
+    <div id="undoredo">
+      <img src="../fig/undo.svg" width="50" height="50" id="undoicon" onclick="undo()"></src>
+      <img src="../fig/redo.svg" width="50" height="50" id="redoicon" onclick="redo()"></src>
+    </div>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="../js/stack.js"></script>
     <script>
       var Sample_set = false;
 
@@ -231,14 +235,29 @@
         },
       }
       
+
+      if (!sessionStorage.hasOwnProperty("pastStack")) {
+        document.getElementById("undoicon").style.display = "none";
+      }
+      if (!sessionStorage.hasOwnProperty("futureStack")) {
+        document.getElementById("redoicon").style.display = "none";
+      }
+      var pastStack = [];
+      var futureStack = [];
+      if (sessionStorage.hasOwnProperty("pastStack")) {
+        pastStack = JSON.parse(sessionStorage.getItem("pastStack"));
+      }
+      if (sessionStorage.hasOwnProperty("futureStack")) {
+        futureStack = JSON.parse(sessionStorage.getItem("futureStack"));
+      }
       if (!localStorage.hasOwnProperty("colortheme")) {
         localStorage.setItem("colortheme", "blue");
       }
       var colortheme = localStorage.getItem("colortheme");
+      console.log(colortheme);
       document.body.bgColor = colorlist[colortheme]["bg"]; 
       document.getElementsByClassName("modal")[0].style.background = colorlist[colortheme]["modal"];
       document.getElementsByClassName("modal")[1].style.background = colorlist[colortheme]["modal"];
-      // document.getElementsByClassName("modal")[1].style.background = "red";
       // localStorage.clear();
       var tutorial_ = [
         {
@@ -254,9 +273,7 @@
         var dataJson = JSON.stringify(tutorial_, undefined, 1);
         localStorage.setItem("data_set", dataJson);
       }
-      if (!localStorage.hasOwnProperty("pre_data_set")) {
-        document.getElementById("undoicon").style.display = "none";
-      }
+
       var dataSet = JSON.parse(localStorage.getItem("data_set"));
       // dataSet = JSON.parse(dataJson);
       var lenChildren = {};
@@ -582,8 +599,13 @@
 
       // 6. クリック時のイベント
       function deleteBubble(d) {
-        var preDataset = localStorage.getItem("data_set");
-        localStorage.setItem("pre_data_set", preDataset);
+
+        pastStack.push(dataSet);
+        var pastStack_ = JSON.stringify(pastStack, undefined, 1);
+        sessionStorage.setItem("pastStack", pastStack_);
+        console.log(dataSet);
+        sessionStorage.removeItem("futureStack");
+
         var newDataSet_ = [];
         for (parent of dataSet) {
           if (parent.name != d.name) {
@@ -645,10 +667,11 @@
         document.getElementById("mask").style.display = "none";
         document.getElementById("modal1").style.display = "none";
 
-        var preDataset = localStorage.getItem("data_set");
-        localStorage.setItem("pre_data_set", preDataset);
+        pastStack.push(dataSet);
+        var pastStack_ = JSON.stringify(pastStack, undefined, 1);
+        sessionStorage.setItem("pastStack", pastStack_);
         console.log(dataSet);
-
+        sessionStorage.removeItem("futureStack");
         var newDataSet = dataSet;
         newDataSet.push({ name: new_parent_name, children: [] });
         var newDataSet_ = JSON.stringify(newDataSet, undefined, 1);
@@ -681,9 +704,11 @@
         document.getElementById("mask").style.display = "none";
         document.getElementById("modal1").style.display = "none";
 
-        var preDataset = localStorage.getItem("data_set");
-        localStorage.setItem("pre_data_set", preDataset);
+        pastStack.push(dataSet);
+        var pastStack_ = JSON.stringify(pastStack, undefined, 1);
+        sessionStorage.setItem("pastStack", pastStack_);
         console.log(dataSet);
+        sessionStorage.removeItem("futureStack");
 
         var newDataSet = dataSet;
         // newDataSet.push({ name: new_parent_name, children: [] });
@@ -712,12 +737,39 @@
       }
 
       function undo(){
-        if (!localStorage.hasOwnProperty("pre_data_set")) {
-          return 1;
+        console.log(dataSet);
+        console.log("future",futureStack);      
+        futureStack.push(dataSet);
+        dataSet = pastStack.pop();
+
+        var dataSet_ = JSON.stringify(dataSet);
+        var pastStack_ = JSON.stringify(pastStack);
+        var futureStack_ = JSON.stringify(futureStack);
+        localStorage.setItem("data_set", dataSet_);
+        if (pastStack.length == 0){
+          sessionStorage.removeItem("pastStack")
+        } else {
+          sessionStorage.setItem("pastStack",pastStack_);
         }
-        var preDataset = localStorage.getItem("pre_data_set");
-        localStorage.setItem("data_set", preDataset);
-        localStorage.removeItem("pre_data_set");
+        sessionStorage.setItem("futureStack",futureStack_);
+        windowReload();
+      }
+
+      function redo(){
+        console.log(futureStack);
+        pastStack.push(dataSet);
+        dataSet = futureStack.pop();
+
+        var dataSet_ = JSON.stringify(dataSet);
+        var pastStack_ = JSON.stringify(pastStack);
+        var futureStack_ = JSON.stringify(futureStack);
+        localStorage.setItem("data_set", dataSet_);
+        sessionStorage.setItem("pastStack",pastStack_);
+        if(futureStack.length == 0){
+          sessionStorage.removeItem("futureStack")
+        } else {
+          sessionStorage.setItem("futureStack",futureStack_);
+        }
         windowReload();
       }
 
