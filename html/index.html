@@ -152,6 +152,8 @@
         localStorage.setItem("data_set", dataJson);
       }
 
+      // document.getElementsByClassName("modal")[0].style.background = "#rgba(20,20,27,0.7)";
+      // document.getElementsByClassName("modal")[1].style.background = "red";
       // localStorage.clear();
       var tutorial_ = [
         {
@@ -577,7 +579,7 @@
 
         console.log(new_children_name);
         if (new_children_name == "") {
-          document.getElementById("inputChilrenName").value = "Empty input";
+          document.getElementById("inputChildrenName").value = "Empty input";
           return 1;
         }
         if (childrenNameSet.has(pname + new_children_name)) {
