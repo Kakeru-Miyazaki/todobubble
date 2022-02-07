@@ -10,6 +10,7 @@
       user-select: none;
     }
   </style>
+  <link rel="stylesheet" href="./../css/main.css" />
   <link rel="stylesheet" href="./../css/modal.css" />
 
   <body>
@@ -38,8 +39,7 @@
       </p>
       <div id="close2" class="close" onclick="registerChildren()">Register</div>
     </section>
-
-    <!-- <svg width="1600" height="1000"></svg> -->
+    <img src="../fig/undo.svg" width="50" height="50" id="undoicon" onclick="undo()"></src>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
       var Sample_set = false;
@@ -166,6 +166,9 @@
       if (!localStorage.hasOwnProperty("data_set")) {
         var dataJson = JSON.stringify(tutorial_, undefined, 1);
         localStorage.setItem("data_set", dataJson);
+      }
+      if (!localStorage.hasOwnProperty("pre_data_set")) {
+        document.getElementById("undoicon").style.display = "none";
       }
       var dataSet = JSON.parse(localStorage.getItem("data_set"));
       // dataSet = JSON.parse(dataJson);
@@ -505,16 +508,7 @@
                 console.log(children);
               }
             }
-            // console.log(pushContent.children.length);
-            if (
-              true
-              // !(
-              //   pushContent.children.length != 0 &&
-              //   parent.name == d.parent_name
-              // )
-            ) {
               newDataSet_.push(pushContent);
-            }
           }
         }
         var newDataSet = JSON.stringify(newDataSet_, undefined, 1);
@@ -625,6 +619,16 @@
         windowReload();
       }
 
+      function undo(){
+        if (!localStorage.hasOwnProperty("pre_data_set")) {
+          return 1;
+        }
+        var preDataset = localStorage.getItem("pre_data_set");
+        localStorage.setItem("data_set", preDataset);
+        localStorage.removeItem("pre_data_set");
+        windowReload();
+      }
+
       function windowReload() {
         window.location.href = window.location.href;
       }
@@ -634,6 +638,7 @@
         document.getElementById("modal1").style.display = "none";
         document.getElementById("modal2").style.display = "none";
       }
+
     </script>
   </body>
 </html>
