@@ -1,3 +1,7 @@
+html {
+  font-family: "Lora", serif;
+  font-family: "Ubuntu", sans-serif;
+}
 #undoicon {
   position: absolute;
   left: 25px;
